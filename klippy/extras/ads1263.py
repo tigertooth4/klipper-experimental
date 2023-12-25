@@ -427,7 +427,7 @@ class ADS1263(multiplex_adc.MultiplexAdcSensor):
         return REG_MODE2.to_string(REG_MODE2.write(self, val))
     def set_ref_mux(self, vref):
         if vref is None: return
-        return REG_REF_MUX.to_string(REG_REF_MUX.write(self, (vref << 3) | vref))
+        return REG_REF_MUX.to_string(REG_REF_MUX.write(self,(vref<<3) | vref))
     def set_offset_cal(self, offset):
         if offset is None: return
         return REG_OFFSET_CAL.to_string(REG_OFFSET_CAL.write_int(self, offset))

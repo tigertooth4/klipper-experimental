@@ -25,10 +25,10 @@ In development 3 sensors chips are supported: HX711, HX717 and ADS1263.
 
 #### HX71x Chips
 The HX717 and HX711 are low cost 24 bit ADC chips that support2 channels and a
-limited number of gain settings. They only support bit bang communications and 
-the protocol is based on tight timing which requires turning off the interrupts 
-on the MCU (similar to the Neopixel chips). The HX711 is limited to 80 SPS and 
-the HX717 to 320SPS. Sample rate is selected by either supplying a voltage or 
+limited number of gain settings. They only support bit bang communications and
+the protocol is based on tight timing which requires turning off the interrupts
+on the MCU (similar to the Neopixel chips). The HX711 is limited to 80 SPS and
+the HX717 to 320SPS. Sample rate is selected by either supplying a voltage or
 grounding one of the pins on the chip, so it cant be changed by klipper.
 
 ##### hx711
@@ -40,31 +40,31 @@ sclk_pin: PB7
 dout_pin: PB6
 #   connected to the data output pin
 #gain: A-128
-#   Valid values for `gain` are `A-128`, `A-64`, `B-32`. The default is `A-128`. 
-#   `A` denotes the input channel and the number denotes the gain. Only the 3 
-#   listed combinations are supported by the chip. Note that changing the gain 
+#   Valid values for `gain` are `A-128`, `A-64`, `B-32`. The default is `A-128`.
+#   `A` denotes the input channel and the number denotes the gain. Only the 3
+#   listed combinations are supported by the chip. Note that changing the gain
 #   setting also selects the channel being read.
 #sample_rate: 10
 #   Valid values for `sample_rate` are `10` or `80`. The default value is `10`.
-#   This must match the wiring of the chip. The sample rate cannot be changed 
+#   This must match the wiring of the chip. The sample rate cannot be changed
 #   in software.
 ```
 
 ##### hx717
 ```
 [load_cell my_scale]
-sensor_type: hx711
+sensor_type: hx717
 sclk_pin: PB7
 #   connected to the clock pin
 dout_pin: PB6
 #   connected to the data output pin
 #gain: A-64
-#   Valid values for `gain` are `A-128`, `B-64`, `A-64`, `B-8`. 
-#   `A` denotes the input channel and the number denotes the gain setting. 
-#   Only the 4 listed combinations are supported by the chip. Note that 
+#   Valid values for `gain` are `A-128`, `B-64`, `A-64`, `B-8`.
+#   `A` denotes the input channel and the number denotes the gain setting.
+#   Only the 4 listed combinations are supported by the chip. Note that
 #   changing the gain setting also selects the channel being read.
 #sample_rate: 320
-#   Valid values for `sample_rate` are `320`, `80`, `20` or `10`. 
+#   Valid values for `sample_rate` are `320`, `80`, `20` or `10`.
 #   The default is `320`. This must match the wiring of the chip.
 #   The sample rate cannot be changed in software.
 ```
@@ -92,15 +92,15 @@ cs_pin: SPI3_CS
 #   2400, 4800, 7200, 14400, 19200, and 38400 samples per second.
 #   The value selects an index in that list. e.g. 8 is 400 SPS.
 #gain: 5
-#   The chip supports gain settings of 1, 2, 4, 8, 16 and 32. 
+#   The chip supports gain settings of 1, 2, 4, 8, 16 and 32.
 #   The `gain` parameter is the index in that list. e.g. 5 is a gain of 32.
 ```
 Channel, gain, filtering and sample frequency and much more are all
 independently configurable in software. If interested, read the code in
 ads1263.py for full options list.
 
-This chip also has a set of GCode commands that let you configure more advanced 
-chip functions, dump internal registers etc. Again, if interested, 
+This chip also has a set of GCode commands that let you configure more advanced
+chip functions, dump internal registers etc. Again, if interested,
 read ads1263.py.
 
 ## [load_cell_probe]
@@ -117,7 +117,7 @@ load_cell: load_cell my_scale
 #   The number of samples over the trigger_force_grams threshold that will cause
 #   the probe to trigger
 #pullback_dist: 0.1
-#   The distance of the pullback move in mm. This move needs to be long enough 
+#   The distance of the pullback move in mm. This move needs to be long enough
 #   to bring the probe away from the bed after it makes contact.
 #pullback_speed: 0.4
 #   Speed of the pullback move. The default value is to move at a speed of 1

@@ -248,7 +248,7 @@ class TapAnalysis(object):
             if print_time >= start_time and print_time < end_time:
                 # we have found the move
                 move_t = move.move_t
-                move_time = max(0., 
+                move_time = max(0.,
                         min(move_t, print_time - move.print_time))
                 dist = ((move.start_v + .5 * move.accel * move_time)
                             * move_time)
@@ -291,7 +291,7 @@ class TapAnalysis(object):
         home_end_index = index_near(time, self.home_end_time)
         pullback_start_index = index_near(time, self.pullback_start_time)
         # look forward for the next index where force decreases:
-        # REVIEW: On my printer it is always true that the calculated 
+        # REVIEW: On my printer it is always true that the calculated
         # home_end_time is before peak force. Could this not be true other
         # printers?
         max_force = abs(force[home_end_index])
@@ -336,7 +336,7 @@ class TapAnalysis(object):
     # validate that a set of ForcePoint objects are in chronological order
     def validate_order(self):
         p = self.tap_points
-        return (p[0].time < p[1].time < p[2].time 
+        return (p[0].time < p[1].time < p[2].time
                 < p[3].time < p[4].time < p[5].time)
     # Validate that the rotations between lines form a tap shape
     def validate_elbow_rotation(self):
@@ -352,7 +352,7 @@ class TapAnalysis(object):
         return start_idx > 0 and end_idx < len(self.time)
     # the propose break contact point must fall inside the pullback move
     def validate_break_contact_time(self, break_contact_time):
-        return (self.pullback_start_time < break_contact_time 
+        return (self.pullback_start_time < break_contact_time
                 < self.pullback_end_time)
     def calculate_angles(self):
         l1, l2, l3, l4, l5 = self.tap_lines
@@ -439,7 +439,7 @@ class LoadCellEndstop:
         # Lookup commands
         cmd_queue = self._trsyncs[0].get_command_queue()
         self._query_cmd = self._mcu.lookup_query_command(
-            "load_cell_endstop_query_state oid=%c", 
+            "load_cell_endstop_query_state oid=%c",
             "load_cell_endstop_state oid=%c homing=%c homing_triggered=%c" \
             " is_triggered=%c trigger_ticks=%u sample=%i sample_ticks=%u",
             oid=self._oid, cq=cmd_queue)
@@ -460,7 +460,7 @@ class LoadCellEndstop:
     def _set_endstop_range(self):
         self.tare_counts = int(self._load_cell.get_tare_counts())
         counts_per_gram = self._load_cell.get_counts_per_gram()
-        self.trigger_counts = abs(int(self.trigger_force_grams 
+        self.trigger_counts = abs(int(self.trigger_force_grams
                                       * counts_per_gram))
         self._set_range_cmd.send([self._oid, self.trigger_counts,
                                 self.tare_counts])
@@ -566,7 +566,7 @@ class LoadCellEndstop:
         toolhead = self._printer.lookup_object('toolhead')
         collector = self._load_cell.get_collector()
         # collect and discard samples up to the end of the current
-        collector.collect_until(toolhead.get_last_move_time() 
+        collector.collect_until(toolhead.get_last_move_time()
                                 + self.settling_time)
         tare_samples = collector.collect_samples(self.tare_count)
         tare_counts = np.average(np.array(tare_samples)[:,2].astype(float))
@@ -619,7 +619,7 @@ class LoadCellPrinterProbe(probe.PrinterProbe):
                                         , minval=0.01, maxval=2.0, default=0.1)
         sps = self._load_cell.get_sensor().get_samples_per_second()
         default_pullback_speed = sps * 0.001
-        #TODO: Math: set the minimum pullback speed such that at least 
+        #TODO: Math: set the minimum pullback speed such that at least
         # enough samples will be collected
         # e.g. 5 + 1 + (2 * discard)
         self.pullback_speed = config.getfloat('pullback_speed'
@@ -671,7 +671,7 @@ class LoadCellPrinterProbe(probe.PrinterProbe):
         toolhead.flush_step_generation()
         pullback_end = toolhead.get_last_move_time()
         return pullback_end
-    # Override 
+    # Override
     def _probe(self, speed):
         self.collector = self._load_cell.get_collector()
         toolhead = self.printer.lookup_object('toolhead')
@@ -692,7 +692,7 @@ class LoadCellPrinterProbe(probe.PrinterProbe):
             raise self.printer.command_error(reason)
         pullback_end_time = self._pullback_move()
         pullback_end_pos = toolhead.get_position()
-        samples = self.collector.collect_until(pullback_end_time 
+        samples = self.collector.collect_until(pullback_end_time
                                                + self.pullback_extra_time)
         self.collector = None
         ppa = TapAnalysis(self.printer, samples)
@@ -708,7 +708,7 @@ class LoadCellPrinterProbe(probe.PrinterProbe):
                                 % (epos[0], epos[1], epos[2]))
                 return epos[:3]
         return pullback_end_pos[:3]
-    # Override 
+    # Override
     def run_probe(self, gcmd):
         speed = gcmd.get_float("PROBE_SPEED", self.speed, above=0.)
         lift_speed = self.get_lift_speed(gcmd)
@@ -768,11 +768,11 @@ class LoadCellPrinterProbe(probe.PrinterProbe):
     #def get_status(self, eventtime):
     #    status = super.get_status(eventtime)
     #    return status
-    
+
 def load_config(config):
     printer = config.get_printer()
     load_cell = printer.lookup_object(config.get('load_cell'))
     load_cell_endstop = LoadCellEndstop(config, load_cell)
-    printer.add_object('probe', 
+    printer.add_object('probe',
                     LoadCellPrinterProbe(config, load_cell, load_cell_endstop))
     return load_cell_endstop
