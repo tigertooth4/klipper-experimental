@@ -76,7 +76,7 @@ hx71x_delay(hx71x_time_t start, hx71x_time_t ticks)
  * HX711 and HX717 Support
  ****************************************************************/
 #define MIN_PULSE_TIME  nsecs_to_ticks(200)
-#define MAX_READ_TIME timer_from_us(50)
+#define MAX_READ_TIME timer_from_us(200)
 
 int8_t
 hx71x_is_ready(struct hx71x_sensor *hx71x) {

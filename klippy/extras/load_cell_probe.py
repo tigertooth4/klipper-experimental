@@ -1,4 +1,4 @@
-# Load Cell rRobe 
+# Load Cell Probe 
 #
 # Copyright (C) 2023 Gareth Farrington <gareth@waves.ky>
 #
@@ -6,7 +6,7 @@
 import logging
 import math
 import chelper
-from load_cell import WebhooksApiDumpRepeater
+from .load_cell import WebhooksApiDumpRepeater
 from . import probe
 from mcu import TRSYNC_SINGLE_MCU_TIMEOUT, TRSYNC_TIMEOUT, MCU_trsync
 
