@@ -13,12 +13,10 @@
 #include "sched.h" // DECL_TASK
 #include "load_cell_endstop.h" // load_cell_endstop_report_sample
 #include "sensor_multiplex_adc.h" // mux_adc_sample
-#include "sensor_ads1263.h" // ads1263_query
 #include "sensor_hx71x.h" // hx711_query
 
-enum { SENSOR_ADS1263, SENSOR_HX71X, SENSOR_ENUM_MAX };
+enum { SENSOR_HX71X, SENSOR_ENUM_MAX };
 
-DECL_ENUMERATION("mux_adc_sensor_type", "ads1263", SENSOR_ADS1263);
 DECL_ENUMERATION("mux_adc_sensor_type", "hx71x", SENSOR_HX71X);
 
 // Flag types
@@ -104,13 +102,6 @@ add_sensor_result(struct mux_adc *mux_adc) {
 
 uint8_t
 is_sensor_ready(struct mux_adc *mux_adc) {
-    // read from the configured sensor
-    if (CONFIG_HAVE_GPIO_SPI) {
-        if (mux_adc->sensor_type == SENSOR_ADS1263) {
-            return ads1263_is_ready(ads1263_oid_lookup(mux_adc->sensor_oid));
-        }
-    }
-    
     if (CONFIG_HAVE_GPIO_BITBANGING) {
         if (mux_adc->sensor_type == SENSOR_HX71X) {
             return hx71x_is_ready(hx71x_oid_lookup(mux_adc->sensor_oid));
@@ -128,16 +119,6 @@ read_sensor(struct mux_adc *mux_adc) {
     // set to saturation point so is nothing is read the value will be an error
     mux_adc->sample.counts = 0xFFFFFFFF;
 
-    // read from the configured sensor
-    if (CONFIG_HAVE_GPIO_SPI) {
-        if (mux_adc->sensor_type == SENSOR_ADS1263) {
-            struct ads1263_sensor *ads = 
-                    ads1263_oid_lookup(mux_adc->sensor_oid);
-            ads1263_query(ads, &mux_adc->sample);
-            return;
-        }
-    }
-    
     if (CONFIG_HAVE_GPIO_BITBANGING) {
         if (mux_adc->sensor_type == SENSOR_HX71X) {
             struct hx71x_sensor *hx = hx71x_oid_lookup(mux_adc->sensor_oid);

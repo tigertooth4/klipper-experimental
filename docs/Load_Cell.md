@@ -69,40 +69,6 @@ dout_pin: PB6
 #   The sample rate cannot be changed in software.
 ```
 
-### ADS1263 Chip
-
-The ADS1263 is a more capable 32 bit sensor with 4 input channels, PGA and up to
-32Khz read speeds. Unfortunately its both large and expensive. It was included
-primarily as a development platform because it can mimic the characteristics of
-other sensors.
-
-This chip supports CRC for sensor reading integrity and has a chip power cycle
-event flag so restarts of the chip can be detected. These are important safety
-features missing in the HX71x chips.
-
-```
-[load_cell my_scale]
-sensor_type: ads1263
-spi_bus: spi3
-cs_pin: SPI3_CS
-#   See the "common SPI settings" section for a description of the
-#   above parameters.
-#sample_rate: 8
-#   The chip supports sampling at 2.5, 5, 10, 16.6, 20, 50, 60, 100, 400, 1200,
-#   2400, 4800, 7200, 14400, 19200, and 38400 samples per second.
-#   The value selects an index in that list. e.g. 8 is 400 SPS.
-#gain: 5
-#   The chip supports gain settings of 1, 2, 4, 8, 16 and 32. 
-#   The `gain` parameter is the index in that list. e.g. 5 is a gain of 32.
-```
-Channel, gain, filtering and sample frequency and much more are all
-independently configurable in software. If interested, read the code in
-ads1263.py for full options list.
-
-This chip also has a set of GCode commands that let you configure more advanced 
-chip functions, dump internal registers etc. Again, if interested, 
-read ads1263.py.
-
 ## [load_cell_probe]
 [load_cell_probe] wraps [load_cell] and turns it into a [probe]. Consult [probe]
 for the full list of options
