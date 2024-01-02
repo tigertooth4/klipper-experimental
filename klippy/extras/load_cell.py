@@ -6,7 +6,7 @@
 import logging
 import collections
 
-from . import hx71x, multiplex_adc
+from . import hx71x, multi_hx71x, multiplex_adc
 
 class SaturationException(Exception):
     pass
@@ -304,7 +304,11 @@ class LoadCell:
         self.printer = printer = config.get_printer()
         self.name = name = config.get_name()
         # Sensor type
-        sensors = { "hx711": hx71x.HX711, "hx717": hx71x.HX717 }
+        sensors = {"hx711": hx71x.HX711,
+                   "hx717": hx71x.HX717,
+                   'multi_hx711': multi_hx71x.MultiHX711,
+                   'multi_hx717': multi_hx71x.MultiHX717
+                }
         sensor_type = config.getchoice('sensor_type', {s: s for s in sensors})
         sensor = sensors[sensor_type](config)
         self.sensor = multiplex_adc.MultiplexAdcSensorWrapper(config, sensor)        

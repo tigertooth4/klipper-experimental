@@ -14,10 +14,12 @@
 #include "load_cell_endstop.h" // load_cell_endstop_report_sample
 #include "sensor_multiplex_adc.h" // mux_adc_sample
 #include "sensor_hx71x.h" // hx711_query
+#include "sensor_multi_hx71x.h" // multi_hx711_query
 
-enum { SENSOR_HX71X, SENSOR_ENUM_MAX };
+enum { SENSOR_HX71X, SENSOR_MULTI_HX71X, SENSOR_ENUM_MAX };
 
 DECL_ENUMERATION("mux_adc_sensor_type", "hx71x", SENSOR_HX71X);
+DECL_ENUMERATION("mux_adc_sensor_type", "multi_hx71x", SENSOR_MULTI_HX71X);
 
 // Flag types
 enum {
@@ -106,6 +108,10 @@ is_sensor_ready(struct mux_adc *mux_adc) {
         if (mux_adc->sensor_type == SENSOR_HX71X) {
             return hx71x_is_ready(hx71x_oid_lookup(mux_adc->sensor_oid));
         }
+        else if (mux_adc->sensor_type == SENSOR_MULTI_HX71X) {
+            return multi_hx71x_is_ready(
+                    multi_hx71x_oid_lookup(mux_adc->sensor_oid));
+        }
     }
 
     shutdown("No sensor found");
@@ -123,6 +129,12 @@ read_sensor(struct mux_adc *mux_adc) {
         if (mux_adc->sensor_type == SENSOR_HX71X) {
             struct hx71x_sensor *hx = hx71x_oid_lookup(mux_adc->sensor_oid);
             hx71x_query(hx, &mux_adc->sample);
+            return;
+        }
+        else if (mux_adc->sensor_type == SENSOR_MULTI_HX71X) {
+            struct multi_hx71x_sensor *hx = 
+                    multi_hx71x_oid_lookup(mux_adc->sensor_oid);
+            multi_hx71x_query(hx, &mux_adc->sample);
             return;
         }
     }
