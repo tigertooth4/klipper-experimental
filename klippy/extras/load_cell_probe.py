@@ -221,8 +221,8 @@ class TapAnalysis(object):
         trapq = printer.lookup_object('motion_report').trapqs['toolhead']
         self.moves = self._extract_trapq(trapq)
         self.home_end_time = self._recalculate_homing_end()
-        self.pullback_start_time = self.moves[3].print_time
-        self.pullback_end_time = self.moves[5].print_time + self.moves[5].move_t
+        self.pullback_start_time = self.moves[-3].print_time
+        self.pullback_end_time = self.moves[-1].print_time + self.moves[-1].move_t
         self.position = self._extract_pos_history()
         self.is_valid = False
         self.tap_pos = None
@@ -258,13 +258,13 @@ class TapAnalysis(object):
                 return pos
             else:
                 continue
-        raise Exception("Move not found, thats impossible!")
+        raise Exception("Move not found, that is impossible!")
     # adjust move_t of move 1 to match the toolhead position of move 2
     def _recalculate_homing_end(self):
         # REVIEW: This takes some logical shortcuts, does it need to be more
         # generalized? e.g. to all 3 axes?
-        homing_move = self.moves[1]
-        halt_move = self.moves[2]
+        homing_move = self.moves[-5]
+        halt_move = self.moves[-4]
         # acceleration should be 0! This is the 'coasting' move:
         accel = homing_move.accel
         if (accel != 0.):
@@ -278,9 +278,8 @@ class TapAnalysis(object):
         moves_out = []
         for move in moves:
             moves_out.append(TrapezoidalMove(move))
-        # it could be 5, in theory, but if it is, thats a bad tap
-        if (len(moves_out) != 6):
-            raise Exception("Expected tap to be 6 moves long")
+        if (len(moves_out) < 5 or len(moves_out) > 6):
+            raise Exception("Expected tap to be 5 to 6 moves long")
         return moves_out
     def analyze(self):
         import numpy as np
@@ -292,7 +291,7 @@ class TapAnalysis(object):
         pullback_start_index = index_near(time, self.pullback_start_time)
         # look forward for the next index where force decreases:
         # REVIEW: On my printer it is always true that the calculated 
-        # home_end_time is before peak force. Could this not be true other
+        # home_end_time is before peak force. Could this not be true for other
         # printers?
         max_force = abs(force[home_end_index])
         peak_force_index = home_end_index
