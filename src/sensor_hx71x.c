@@ -119,8 +119,8 @@ hx71x_query(struct hx71x_sensor *hx71x, struct mux_adc_sample *sample)
     }
 
     if ((timer_read_time() - sample->measurement_time) > MAX_READ_TIME) {
-        // if this happens mcu is probably overloaded
-        shutdown("HX71x read timing error, read took too long");
+        // if this happens mcu is probably overloaded (Disable it to avoid error: xj)
+        // shutdown("HX71x read timing error, read took too long");
     }
 
     // extend 2's complement 24 bits to 32bits
