@@ -34,15 +34,15 @@ class TrapezoidalMove(object):
         self.z_r = float(move.z_r)
     def to_dict(self):
         return {'print_time': float(self.print_time),
-            'move_t': float(self.move_t),
-            'start_v': float(self.start_v),
-            'accel': float(self.accel),
-            'start_x': float(self.start_x),
-            'start_y': float(self.start_y),
-            'start_z': float(self.start_z),
-            'x_r': float(self.x_r),
-            'y_r': float(self.y_r),
-            'z_r': float(self.z_r)
+                'move_t': float(self.move_t),
+                'start_v': float(self.start_v),
+                'accel': float(self.accel),
+                'start_x': float(self.start_x),
+                'start_y': float(self.start_y),
+                'start_z': float(self.start_z),
+                'x_r': float(self.x_r),
+                'y_r': float(self.y_r),
+                'z_r': float(self.z_r)
         }
 
 # point on a time/force graph
@@ -61,7 +61,7 @@ class ForceLine(object):
     # returns +/- 0-180. Positive values represent clockwise rotation
     def angle(self, line, time_scale=0.001):
         radians = (math.atan2(self.slope * time_scale, 1) - 
-                    math.atan2(line.slope * time_scale, 1))
+                   math.atan2(line.slope * time_scale, 1))
         return math.degrees(radians)
     def find_force(self, time):
         return self.slope * time + self.intercept
@@ -131,10 +131,10 @@ def find_two_lines_best_fit(x, y, search_direction=-1):
 
 # split a group of points into 2 lines using 1 elbow point
 def split_to_lines(x, y, elbow_index, discard=[0, 0, 0, 0]):
-    l1 = lstsq_line(x[0 + discard[0] : elbow_index - discard[1]],
-                    y[0 + discard[0] : elbow_index - discard[1]])
-    l2 = lstsq_line(x[elbow_index + discard[2] : -1 - discard[3]],
-                    y[elbow_index + discard[2] : -1 - discard[3]])
+    l1 = lstsq_line(x[0 + discard[0]: elbow_index - discard[1]],
+                    y[0 + discard[0]: elbow_index - discard[1]])
+    l2 = lstsq_line(x[elbow_index + discard[2]: -1 - discard[3]],
+                    y[elbow_index + discard[2]: -1 - discard[3]])
     return (l1, l2)
 
 # split a line into 3 parts by elbows. Return lines and intersection points
@@ -206,7 +206,7 @@ def elbow_r_squared(force, time, elbow_idx, widths, left_line, right_line):
         r_squared.append(round((r2 * 100.), 1))
     return r_squared
 
-#TODO: maybe discard points can scale with sample rate from 1 to 3
+# TODO: maybe discard points can scale with sample rate from 1 to 3
 DEFAULT_DISCARD_POINTS = 3
 class TapAnalysis(object):
     def __init__(self, printer, samples, discard=DEFAULT_DISCARD_POINTS):
@@ -221,8 +221,8 @@ class TapAnalysis(object):
         trapq = printer.lookup_object('motion_report').trapqs['toolhead']
         self.moves = self._extract_trapq(trapq)
         self.home_end_time = self._recalculate_homing_end()
-        self.pullback_start_time = self.moves[3].print_time
-        self.pullback_end_time = self.moves[5].print_time + self.moves[5].move_t
+        self.pullback_start_time = self.moves[-3].print_time
+        self.pullback_end_time = self.moves[-1].print_time + self.moves[-1].move_t
         self.position = self._extract_pos_history()
         self.is_valid = False
         self.tap_pos = None
@@ -258,13 +258,13 @@ class TapAnalysis(object):
                 return pos
             else:
                 continue
-        raise Exception("Move not found, thats impossible!")
+        raise Exception("Move not found, that is impossible!")
     # adjust move_t of move 1 to match the toolhead position of move 2
     def _recalculate_homing_end(self):
         # REVIEW: This takes some logical shortcuts, does it need to be more
         # generalized? e.g. to all 3 axes?
-        homing_move = self.moves[1]
-        halt_move = self.moves[2]
+        homing_move = self.moves[-5]
+        halt_move = self.moves[-4]
         # acceleration should be 0! This is the 'coasting' move:
         accel = homing_move.accel
         if (accel != 0.):
@@ -278,9 +278,8 @@ class TapAnalysis(object):
         moves_out = []
         for move in moves:
             moves_out.append(TrapezoidalMove(move))
-        # it could be 5, in theory, but if it is, thats a bad tap
-        if (len(moves_out) != 6):
-            raise Exception("Expected tap to be 6 moves long")
+        if (len(moves_out) < 5 or len(moves_out) > 6):
+            raise Exception("Expected tap to be 5 to 6 moves long")
         return moves_out
     def analyze(self):
         import numpy as np
@@ -291,8 +290,8 @@ class TapAnalysis(object):
         home_end_index = index_near(time, self.home_end_time)
         pullback_start_index = index_near(time, self.pullback_start_time)
         # look forward for the next index where force decreases:
-        # REVIEW: On my printer it is always true that the calculated
-        # home_end_time is before peak force. Could this not be true other
+        # REVIEW: On my printer it is always true that the calculated 
+        # home_end_time is before peak force. Could this not be true for other
         # printers?
         max_force = abs(force[home_end_index])
         peak_force_index = home_end_index
