@@ -6,7 +6,7 @@
 import logging
 import collections
 
-from . import hx71x, multi_hx71x, multiplex_adc
+from . import ads1263, hx71x, multi_hx71x, multiplex_adc
 
 class SaturationException(Exception):
     pass
